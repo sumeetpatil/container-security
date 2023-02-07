@@ -62,7 +62,7 @@ Sometimes people just mount the docker socket inside the container. If an attack
 3. `docker --version` to check if docker is running
 4. `docker run -it --rm centos sh`
 5. With this you can run containers in host machine
-6. As we can its very dangerous to mount the docker socket inside any container. The centos container can do anything that the host system can do as root.
+6. As we can see it is very dangerous to mount the docker socket inside any container. The centos container can do anything that the host system can do as root.
 
 
 #### Prevention
