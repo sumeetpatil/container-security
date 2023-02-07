@@ -46,7 +46,7 @@ Example : We can run a DOS(Denial of service) attack once we have full access(ro
 2. As the continer is running in privileged mode. It disables all the security measures.
 3. Run command `mount` which gives all the mount points
 4. Now you can mount any of these mounts from the host system
-5. Run `mkdir /hostroot && mount /dev/vda1 hostroot`
+5. Run `mkdir /hostroot && mount /dev/sda1 /hostroot`
 6. This mount the host machines data to your container
 
 #### Prevention
