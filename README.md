@@ -91,6 +91,53 @@ This gives attacer a clear access.
 #### Prevention
 1. Run an apache2 or nginx as a proxy
 2. Configure SSL, Authentication in nginx/apache2
+3. Config for apache 2 - 
+4. Run these commands
+   ```
+   sudo a2enmod proxy
+   sudo a2enmod proxy_http
+   sudo a2enmod proxy_balancer
+   sudo a2enmod lbmethod_byrequests
+   sudo systemctl restart apache2
+   sudo vi /etc/apache2/sites-available/000-default.conf
+   
+   Add this content -
+   <VirtualHost *:80>
+    ProxyPreserveHost On
+
+    ProxyPass / http://127.0.0.1:2376/
+    ProxyPassReverse / http://127.0.0.1:2376/
+   </VirtualHost>
+   
+   sudo systemctl restart apache2
+   ```
+5. With these config you are able to proxy your load to port 80. 
+   `curl http://localhost/version` should give you the docker version
+6. Adding authentication - 
+   ```
+   sudo apt install apache2-utils
+   sudo htpasswd -c /etc/apache2/.htpasswd sammy
+   Enter your password here
+   
+   Check if password exists 
+   cat /etc/apache2/.htpasswd
+   
+   vi /etc/apache2/sites-available/000-default.conf
+   
+   Add this content -
+   
+   <Location />
+      AuthType Basic
+      AuthName "Restricted Content"
+      AuthUserFile /etc/apache2/.htpasswd
+      Require valid-user
+   </Location>
+   
+   Run - sudo systemctl restart apache2
+   
+   ```
+   
+7. Now access `curl http://localhost/version` this should prompt you username/password
 
 
 
