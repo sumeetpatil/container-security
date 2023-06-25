@@ -139,5 +139,16 @@ This gives attacer a clear access.
    
 7. Now access `curl http://localhost/version` this should prompt you username/password
 
+## Outdated/Vulnerable components in the docker image
+The docker image could contain outdated/vulnerable packages.
+
+#### Attack
+Old docker images contain vulnerable components. Based on this attacker could try attacking the docker container.  
+
+#### Prevention
+1. Keep your image version updated.
+2. You can scan these docker images with tools like Black Duck Binary Analysis which gives you a list of vulnerable packages installed in the docker images. Based on this information you can upgrade your image.
+3. Use the latest base image while building your custom image.
+
 
 
